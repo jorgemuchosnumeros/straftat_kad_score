@@ -1,24 +1,17 @@
-# Straftat K/D Template (STRAFTAT / BepInEx Mono)
+# Straftat K/D (STRAFTAT / BepInEx Mono)
 
 This mod tracks match K/D from the in-game match log stream and augments the Victory scoreboard.
 
 ## Installation (manual)
 Assuming [BepInEx Mono](https://docs.bepinex.dev/master/articles/user_guide/installation/unity_mono.html) is installed, unzip the release in `STRAFTAT/Bepinex/Plugins`.
 
-## Current behavior
-- Uses `PauseManager.WriteLog` and `MatchLogs` observer receive path as authoritative K/D sources.
-- Parses kill/death log lines and updates in-memory per-player stats during the match.
-- Supports mid-match joins (counts from the moment the player joins and starts receiving logs).
-- Handles rematches by resetting internal state between rounds/matches.
-- On Victory:
-  - appends `K/D: kills/deaths` to each `StatsPlayerOne` text in `VictoryCell(Clone)`.
-  - identifies worst K/D player and enables `fancy` for that row.
-  - disables all `fancy` children except child `0` (`Vector-Crown-PNG-Image-Transparent-Background (1)`).
-  - swaps that child sprite with embedded `assets/ancla.png` and sets global scale `x=0.15`, `y=0.15`.
+## Usage
+![Scoreboard with kd](assets/image.png "Scoreboard with kd")
+
+There will also be an anchor image for the worst K/D score
 
 ## Notes
-- K/D is intentionally killfeed-authoritative to avoid inconsistent RPC timing across host/client/mid-match states.
-- Existing debug logs are prefixed with `[KAD]`.
+- Kills and deaths that ocurred before when joining mid match wont be counted
 
 ## Building
 
