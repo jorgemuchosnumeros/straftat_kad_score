@@ -7,6 +7,6 @@ public static class MatchLogsReceiverPatch
 {
 	public static void Prefix(string line)
 	{
-		Plugin.RecordKillFeedLine(line);
+		Plugin.RecordKillFeedLine(line, true);
 	}
 }

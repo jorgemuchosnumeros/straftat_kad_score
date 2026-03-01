@@ -7,6 +7,6 @@ public static class PauseWriteLogPatch
 {
 	public static void Prefix(string text)
 	{
-		Plugin.RecordKillFeedLine(text);
+		Plugin.RecordKillFeedLine(text, false);
 	}
 }

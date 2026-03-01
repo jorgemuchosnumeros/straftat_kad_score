@@ -34,6 +34,7 @@ public class Plugin : BaseUnityPlugin
     private static bool hasActiveMatch;
     private const float FallbackMaxDamageAgeSeconds = 5f;
     private static readonly bool UseKillFeedAsSourceOfTruth = true;
+    private static readonly bool HostAuthoritativeScoring = true;
     private static readonly Regex PlayerTagRegex = new("\\{PLAYER_NAME\\}:\\{(\\d+)\\}", RegexOptions.Compiled);
     private static Sprite anclaSprite;
 
@@ -136,6 +137,9 @@ public class Plugin : BaseUnityPlugin
 
     public static void RecordDeath(int victimId)
     {
+        if (HostAuthoritativeScoring)
+            return;
+
         if (UseKillFeedAsSourceOfTruth)
         {
             LogInfo($"[KAD] Server death hook ignored for {GetPlayerLabel(victimId)} (killfeed-authoritative mode).");
@@ -394,8 +398,15 @@ public class Plugin : BaseUnityPlugin
         LogInfo($"[KAD] Damage marker: victim={GetPlayerLabel(victimId)} <- damager={GetPlayerLabel(damagerId)} at t={Time.time:0.00}");
     }
 
-    public static void RecordKillFeedLine(string text)
+    public static void RecordKillFeedLine(string text, bool isReceivedNetworkLine)
     {
+        if (HostAuthoritativeScoring)
+        {
+            var isServer = IsAuthoritativeInstance();
+            if (!isServer && !isReceivedNetworkLine)
+                return;
+        }
+
         if (string.IsNullOrEmpty(text))
             return;
 
@@ -461,6 +472,11 @@ public class Plugin : BaseUnityPlugin
 
         LastProcessedKillFeedLineTime[key] = Time.time;
         return true;
+    }
+
+    public static bool IsAuthoritativeInstance()
+    {
+        return GameManager.Instance != null && GameManager.Instance.IsServer;
     }
 
     private static string GetPlayerLabel(int playerId)
